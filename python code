@@ -1,0 +1,48 @@
+import requests
+import pyttsx3
+
+# Initialize the engine as a global variable
+engine = pyttsx3.init()
+
+def get_weather_data(api_key, city):
+    base_url = "http://api.openweathermap.org/data/2.5/weather?"
+    complete_url = f"{base_url}q={city}&appid={api_key}&units=metric"
+    response = requests.get(complete_url)
+    data = response.json()
+    return data
+
+def display_weather(data, city_name):
+    if data["cod"] == "404":
+        print(f"Weather for {city_name} not found.")
+    else:
+        weather_description = data["weather"][0]["description"]
+        temperature = data["main"]["temp"]
+        humidity = data["main"]["humidity"]
+        wind_speed = data["wind"]["speed"]
+
+        print(f"Weather in {city_name}: {weather_description}")
+        print(f"Temperature: {temperature}°C")
+        print(f"Humidity: {humidity}%")
+        print(f"Wind Speed: {wind_speed} m/s")
+
+        engine.say(f"Weather in {city_name}: {weather_description}")
+        engine.say(f"Temperature: {temperature}°C")
+        engine.say(f"Humidity: {humidity}%")
+        engine.say(f"Wind Speed: {wind_speed} m/s")
+        engine.runAndWait()
+
+def get_user_input():
+    print("Please enter the name of the city:")
+    engine.say("Please enter the name of the city:")
+    engine.runAndWait()
+    city_text = input()
+    return city_text
+
+def main():
+    api_key = "XYZABC" #USE YOUR API HERE 
+    city_text = get_user_input()
+    weather_data_text = get_weather_data(api_key, city_text)
+    display_weather(weather_data_text, city_text)
+
+if __name__ == "__main__":
+    main()
